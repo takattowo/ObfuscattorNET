@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObfuscattorNET", "Obfuscatt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObfuscattorLib", "ObfuscattorLib\ObfuscattorLib.csproj", "{0FE687CD-6631-428E-A054-8039A20E6F6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialSurface", "MaterialSurface\MaterialSurface\MaterialSurface.csproj", "{7FA77898-7DC1-44C2-BBB9-E054A9EE8BA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnlib", "dnlib-master\src\dnlib.csproj", "{950432E8-F4C8-406F-94C6-7E60274139B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0FE687CD-6631-428E-A054-8039A20E6F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FE687CD-6631-428E-A054-8039A20E6F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FE687CD-6631-428E-A054-8039A20E6F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FA77898-7DC1-44C2-BBB9-E054A9EE8BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA77898-7DC1-44C2-BBB9-E054A9EE8BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA77898-7DC1-44C2-BBB9-E054A9EE8BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA77898-7DC1-44C2-BBB9-E054A9EE8BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{950432E8-F4C8-406F-94C6-7E60274139B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{950432E8-F4C8-406F-94C6-7E60274139B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{950432E8-F4C8-406F-94C6-7E60274139B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{950432E8-F4C8-406F-94C6-7E60274139B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

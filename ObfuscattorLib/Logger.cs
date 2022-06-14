@@ -10,10 +10,7 @@ namespace ObfuscattorLib
     {
         public static void LogMessage(string pre, string past, ConsoleColor PastColor)
         {
-            Console.Write(pre);
-            Console.ForegroundColor = PastColor;
-            Console.WriteLine(past);
-            Console.ForegroundColor = ConsoleColor.White;
+            Worker.Log += "\n" + pre + "\n" + past;
         }
     }
 }

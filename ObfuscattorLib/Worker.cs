@@ -23,16 +23,38 @@ namespace ObfuscattorLib
 
         public ModuleDefMD Module { get; set; }
         public string Path { get; set; }
+        public string Destination { get; set; }
 
+        public static string Log { get; set; }
         public string Code { get; set; }
         public Worker(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                Path = string.Empty;
+                Destination = string.Empty;
+                Log = string.Empty;
+                return;
+            }
+
             Path = path.Replace("\"", "");
-            LoadAssembly();
+            //LoadAssembly();
             LoadModuleDefMD();
             LoadObfuscations();
-            LoadDependencies();
+            //LoadDependencies();
             RuntimeHelper.Importer = new Importer(Module);
+
+
+            
+        }
+        
+        public void SetDestination(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            var name = System.IO.Path.GetFileName(Path);
+            Destination = path + "\\" + name;
         }
 
         public Worker(byte[] file, List<byte[]> deps)
@@ -42,11 +64,12 @@ namespace ObfuscattorLib
             LoadObfuscations();
             LoadDependenciesFromBytes(deps);
             RuntimeHelper.Importer = new Importer(Module);
+
         }
 
         public void Watermark()
         {
-            Console.WriteLine("Watermarking...");
+            Log += "\nWatermarking...";
             TypeRef attrRef = Module.CorLibTypes.GetTypeRef("System", "Attribute");
             var attrType = new TypeDefUser("", "ObfuscattorLibAttribute", attrRef);
             Module.Types.Add(attrType);
@@ -85,58 +108,85 @@ namespace ObfuscattorLib
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    Log += "\n" + ex;
                 }
             }
             watch.Stop();
-            Console.WriteLine("Time taken: " + watch.Elapsed.ToString());
+
+            Log += "\nTime taken: " + watch.Elapsed.ToString();
         }
 
+        public string ReturnAssemblyName()
+        {
+            Log += "\nLoading assembly...";
+            Default_Assembly = System.Reflection.Assembly.UnsafeLoadFrom(Path);
+            Log += "\nLoaded: " + Default_Assembly.FullName;
+            return Default_Assembly.FullName;   
+            
+        }
+        
         public void LoadAssembly()
         {
-            Console.Write("Loading assembly...");
+            Log += "\nLoading assembly...";
             Default_Assembly = System.Reflection.Assembly.UnsafeLoadFrom(Path);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" Loaded: ");
-            Console.WriteLine(Default_Assembly.FullName);
-            Console.ForegroundColor = ConsoleColor.White;
+            Log += "\nLoaded " + Default_Assembly.FullName;
         }
 
         public void LoadAssemblyFromBytes(byte[] array)
         {
-            Console.Write("Loading assembly...");
+            Log += "\nLoading assembly...";
             Default_Assembly = System.Reflection.Assembly.Load(array);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" Loaded: ");
-            Console.WriteLine(Default_Assembly.FullName);
-            Console.ForegroundColor = ConsoleColor.White;
+            Log += "\nLoaded " + Default_Assembly.FullName;
         }
 
         public void LoadModuleDefMD()
         {
-            Console.Write("Loading ModuleDefMD...");
+            Log += "\nLoading ModuleDefMD...";
             Module = ModuleDefMD.Load(Path);
             Assembly = Module.Assembly;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" Loaded: ");
-            Console.WriteLine(Module.FullName);
-            Console.ForegroundColor = ConsoleColor.White;
+
+            Log += "\nLoaded " + Module.FullName;
         }
 
         public void LoadModuleDefMDFromBytes(byte[] array)
         {
-            Console.Write("Loading ModuleDefMD...");
+            Log += "\nLoading ModuleDefMD...";
             Module = ModuleDefMD.Load(array);
             Assembly = Module.Assembly;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" Loaded: ");
-            Console.WriteLine(Module.FullName);
-            Console.ForegroundColor = ConsoleColor.White;
+            Log += "\nLoaded " + Module.FullName;
+        }
+
+        public List<String> LoadDependenciesList()
+        {
+            var list = new List<String>();
+            var asmResolver = new AssemblyResolver();
+            ModuleContext modCtx = new ModuleContext(asmResolver);
+
+            asmResolver.DefaultModuleContext = modCtx;
+
+            asmResolver.EnableTypeDefCache = true;
+
+            asmResolver.DefaultModuleContext = new ModuleContext(asmResolver);
+            asmResolver.PostSearchPaths.Insert(0, Path);
+            if (IsCosturaPresent(Module))
+            {
+                foreach (var asm in ExtractCosturaEmbeddedAssemblies(GetEmbeddedCosturaAssemblies(Module), Module))
+                    asmResolver.AddToCache(asm);
+            }
+
+            foreach (var dependency in Module.GetAssemblyRefs())
+            {
+                AssemblyDef assembly = asmResolver.ResolveThrow(dependency, Module);
+                list.Add(dependency.Name);   
+            }
+            Module.Context = modCtx;
+            
+            return list;
         }
 
         public void LoadDependencies()
         {
-            Console.WriteLine("Resolving dependencies...");
+            Log += "\nResolving dependencies...";
             var asmResolver = new AssemblyResolver();
             ModuleContext modCtx = new ModuleContext(asmResolver);
             
@@ -155,14 +205,16 @@ namespace ObfuscattorLib
             foreach (var dependency in Module.GetAssemblyRefs())
             {
                 AssemblyDef assembly = asmResolver.ResolveThrow(dependency, Module);
-                Console.WriteLine("Resolved " + dependency.Name);
+
+                Log += "\nResolved " + dependency.Name;
             }
             Module.Context = modCtx;
         }
 
         public void LoadDependenciesFromBytes(List<byte[]> files)
         {
-            Console.WriteLine("Resolving dependencies...");
+
+            Log += "\nResolving dependencies...";
             var asmResolver = new AssemblyResolver();
             ModuleContext modCtx = new ModuleContext(asmResolver);
 
@@ -177,7 +229,7 @@ namespace ObfuscattorLib
             {
                 AssemblyDef assembly = AssemblyDef.Load(item);
                 asmResolver.AddToCache(assembly);
-                Console.WriteLine("Resolved " + assembly.Name);
+                Log += "\nResolved " + assembly.Name;
             }
 
             Module.Context = modCtx;
@@ -243,15 +295,21 @@ namespace ObfuscattorLib
                 return AssemblyDef.Load(ms);
             }
         }
-
+        public bool WorkerJobDone = false;
         public void Save()
         {
             Watermark();
-            Logger.LogMessage("Saving as ", Path + ".obfuscated", ConsoleColor.Yellow);
+            Logger.LogMessage("Saving as ", Destination, ConsoleColor.Yellow);
             ModuleWriterOptions opts = new ModuleWriterOptions(Module);
             opts.Logger = DummyLogger.NoThrowInstance;
-            Assembly.Write(Path + ".obfuscated", opts);
-            Console.WriteLine("Saved.");
+            //Assembly.Write(Path + ".obcat", opts);
+            Assembly.Write(Destination, opts);
+            //Console.WriteLine("Saved.");
+
+
+            Log += "\nSaved.";
+            //File.Copy(Path + ".ob", Destination, true);
+            //try { File.Delete(Path + ".ob"); } catch { }
         }
 
         public byte[] SaveToArray()
@@ -261,7 +319,7 @@ namespace ObfuscattorLib
             ModuleWriterOptions opts = new ModuleWriterOptions(Module);
             opts.Logger = DummyLogger.NoThrowInstance;
             Assembly.Write(stream, opts);
-            Console.WriteLine("Saved.");
+            Log += "\nSaved.";
             return stream.ToArray();
         }
 
@@ -280,5 +338,10 @@ namespace ObfuscattorLib
         }
 
         public List<string> Obfuscations { get; set; }
+
+        static void Main()
+        {
+     
+        }
     }
 }

@@ -33,7 +33,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>cat.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MaterialSkin">
+      <HintPath>.\MaterialSkin.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,17 +67,16 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -82,10 +87,52 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MaterialSurface\MaterialSurface\MaterialSurface.csproj">
+      <Project>{7fa77898-7dc1-44c2-bbb9-e054a9ee8ba1}</Project>
+      <Name>MaterialSurface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ObfuscattorLib\ObfuscattorLib.csproj">
       <Project>{0FE687CD-6631-428E-A054-8039A20E6F6E}</Project>
       <Name>ObfuscattorLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cfbf7ffd6dde7b4bd4be383b4f1eb638.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\github.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\github-170-1175028.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\linkedin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cat.ico" />
+    <Content Include="ico.ico" />
+    <None Include="Resources\icons8-warehouse-100.png" />
+    <None Include="Resources\icons8-mana-64.png" />
+    <None Include="Resources\icons8-cat-butt-96.png" />
+    <None Include="Resources\icons8-launch-96.png" />
+    <None Include="Resources\icons8-save-90.png" />
+    <None Include="Resources\icons8-log-96.png" />
+    <None Include="Resources\icons8-log-80.png" />
+    <None Include="Resources\icons8-concept-96.png" />
+    <None Include="Resources\icons8-code-96.png" />
+    <None Include="Resources\icons8-continue-50.png" />
+    <None Include="Resources\icons8-close-96.png" />
+    <None Include="Resources\icons8-folder-192.png" />
+    <None Include="Resources\icons8-group-of-projects-96.png" />
+    <None Include="Resources\bigtext.png" />
+    <None Include="Resources\bigcatto.png" />
+    <None Include="Resources\banner.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
