@@ -82,10 +82,10 @@ namespace ObfuscattorLib
                 keys.Reverse();
                 foreach (Tuple<int, int, int> v in keys)
                 {
-                    method.Body.Instructions[v.Item1].Operand = "ObfuscattorNET - Obfuscator by takatto";
+                    method.Body.Instructions[v.Item1].Operand = "Đường thương đau đầy ải nhân gian ai chưa qua chưa phải là người";
                     method.Body.Instructions.Insert(v.Item1 + 1, new Instruction(OpCodes.Ldc_I4, v.Item2));
                     method.Body.Instructions.Insert(v.Item1 + 2, new Instruction(OpCodes.Ldc_I4, v.Item3));
-                    method.Body.Instructions.Insert(v.Item1 + 3, new Instruction(OpCodes.Call, Decryptor));
+                    method.Body.Instructions.Insert(v.Item1 + 3, new Instruction  (OpCodes.Call, Decryptor));
                 }
             }
             method.Body.OptimizeBranches();
@@ -100,7 +100,12 @@ namespace ObfuscattorLib
                 if (flag)
                 {
                     string code = (string)instr.Operand;
-                    byte[] bytes = Encoding.UTF8.GetBytes(code);
+                    string ceasar = string.Empty;
+
+                    foreach (char ch in code.ToCharArray())
+                        ceasar += (char)(ch + 29023);
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(ceasar);
                     foreach (byte v in bytes)
                     {
                         array.Add(v);
