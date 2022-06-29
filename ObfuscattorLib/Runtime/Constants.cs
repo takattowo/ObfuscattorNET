@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -29,7 +29,13 @@ namespace ObfuscattorLib.Runtime
             {
                 shit.Add(array[key + i]);
             }
-            return Encoding.UTF8.GetString(shit.ToArray());
+
+            string ceasar = Encoding.UTF8.GetString(shit.ToArray());
+            string result = string.Empty;
+            foreach (char ch in ceasar.ToCharArray())
+                result += (char)(ch - 29023);
+
+            return result;
         }
 
         public static void Initialize(int len)
